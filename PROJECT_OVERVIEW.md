@@ -59,7 +59,7 @@ A Self-Sovereign Identity (SSI) framework empowering users with full ownership a
 | Actor | Role | Technology |
 |-------|------|------------|
 | **Issuer** | Creates and digitally signs Verifiable Credentials | Hyperledger Aries Cloud Agent (Python) |
-| **Holder** | Stores private keys and VCs, presents selective disclosures | React Web Wallet + Aries Framework JavaScript |
+| **Holder** | Stores private keys and VCs, presents selective disclosures | Hyperledger Aries Cloud Agent (Python) + React Web UI |
 | **Verifier** | Requests and verifies cryptographic proofs | Hyperledger Aries Verification Agent |
 
 ## 🛠️ Technology Stack
@@ -78,7 +78,10 @@ A Self-Sovereign Identity (SSI) framework empowering users with full ownership a
 ### Development Stack
 
 - **Backend**: Python 3.11+ (Aries Cloud Agent Python - ACA-Py)
-- **Frontend**: React 18+ with TypeScript (web-based wallet)
+  - Issuer Agent (ACA-Py)
+  - Verifier Agent (ACA-Py)
+  - **Holder Agent (ACA-Py)** ← Cloud-hosted wallet
+- **Frontend**: React 18+ with TypeScript (thin client web UI)
 - **Database**: PostgreSQL (wallet storage), Indy Ledger (DIDs)
 - **Container**: Docker & Docker Compose
 - **Testing**: pytest, Jest, Playwright (E2E)
