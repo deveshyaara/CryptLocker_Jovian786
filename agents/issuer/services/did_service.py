@@ -6,7 +6,7 @@ Handles DID creation, registration, and resolution
 import logging
 from typing import Dict, Optional
 import aiohttp
-from ..config.agent_config import config
+from config.agent_config import config
 
 logger = logging.getLogger(__name__)
 

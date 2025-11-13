@@ -9,9 +9,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from .config.agent_config import config
-from .services.presentation_service import PresentationService
-from .services.connection_service import ConnectionService
+from config.agent_config import config
+from services.presentation_service import PresentationService
+from services.connection_service import ConnectionService
 
 # Configure logging
 logging.basicConfig(

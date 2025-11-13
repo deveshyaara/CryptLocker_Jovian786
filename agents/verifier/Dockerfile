@@ -1,7 +1,7 @@
 # Verifier Agent - ACA-Py Configuration
 # Hyperledger Aries Cloud Agent for Credential Verification
 
-FROM ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.12.1
+FROM ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.11.0
 
 USER root
 
@@ -13,6 +13,9 @@ RUN pip install --no-cache-dir \
     python-multipart==0.0.6 \
     aiohttp==3.9.0 \
     python-dotenv==1.0.0
+
+# Disable uvloop to fix event loop issues
+RUN pip uninstall -y uvloop || true
 
 # Create application directory
 WORKDIR /app
@@ -36,22 +39,20 @@ HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
 # Entry point
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["aca-py start \
-    --inbound-transport http 0.0.0.0 8040 \
+    --inbound-transport http 0.0.0.0 ${AGENT_PORT} \
     --outbound-transport http \
-    --admin 0.0.0.0 8050 \
+    --admin 0.0.0.0 ${ADMIN_PORT} \
     --admin-api-key ${ADMIN_API_KEY} \
     --wallet-type askar \
     --wallet-name ${WALLET_NAME} \
     --wallet-key ${WALLET_KEY} \
-    --wallet-storage-type postgres_storage \
-    --wallet-storage-config '{\"url\":\"${DATABASE_URL}\"}' \
+    --wallet-storage-type default \
     --genesis-url ${GENESIS_URL} \
-    --endpoint http://verifier-agent:8040 \
+    --endpoint http://verifier-agent:${AGENT_PORT} \
     --label '${AGENT_NAME}' \
     --public-invites \
     --auto-provision \
     --auto-ping-connection \
     --monitor-ping \
     --log-level ${LOG_LEVEL:-info} \
-    --auto-verify-presentation \
-    --plugin-config-value key_derivation_method=ARGON2I_INT"]
+    --auto-verify-presentation"]

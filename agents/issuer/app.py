@@ -10,11 +10,11 @@ from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from .config.agent_config import config
-from .services.did_service import DIDService
-from .services.schema_service import SchemaService
-from .services.credential_service import CredentialService
-from .services.connection_service import ConnectionService
+from config.agent_config import config
+from services.did_service import DIDService
+from services.schema_service import SchemaService
+from services.credential_service import CredentialService
+from services.connection_service import ConnectionService
 
 # Configure logging
 logging.basicConfig(
