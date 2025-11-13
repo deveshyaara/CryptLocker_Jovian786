@@ -60,10 +60,21 @@ export const verifierClient = createApiClient(API_BASE_URLS.verifier);
 
 // Helper function to handle API errors
 export const handleApiError = (error: any): string => {
-  if (error.response?.data?.detail) {
-    return typeof error.response.data.detail === 'string' 
-      ? error.response.data.detail 
-      : JSON.stringify(error.response.data.detail);
+  if (axios.isAxiosError(error)) {
+    // Network error
+    if (!error.response) {
+      return 'Network error. Please check your connection.';
+    }
+    // Server error with detail
+    if (error.response?.data?.detail) {
+      return typeof error.response.data.detail === 'string' 
+        ? error.response.data.detail 
+        : JSON.stringify(error.response.data.detail);
+    }
+    // Other server errors
+    if (error.response?.data?.message) {
+      return error.response.data.message;
+    }
   }
   if (error.message) {
     return error.message;

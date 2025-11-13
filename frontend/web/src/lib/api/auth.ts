@@ -30,25 +30,34 @@ export const authApi = {
    * Login user
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const formData = new FormData();
-    formData.append('username', credentials.username);
-    formData.append('password', credentials.password);
+    try {
+      // Convert to URLSearchParams for application/x-www-form-urlencoded
+      const params = new URLSearchParams();
+      params.append('username', credentials.username);
+      params.append('password', credentials.password);
 
-    const response = await holderClient.post('/auth/login', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    
-    return response.data;
+      const response = await holderClient.post('/auth/login', params, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+      
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
   },
 
   /**
    * Register new user
    */
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await holderClient.post('/auth/register', data);
-    return response.data;
+    try {
+      const response = await holderClient.post('/auth/register', data);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
+    }
   },
 
   /**
