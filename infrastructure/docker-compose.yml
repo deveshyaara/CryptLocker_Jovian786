@@ -127,6 +127,12 @@ services:
       ADMIN_API_KEY: ${ISSUER_ADMIN_API_KEY:-issuer-api-key-change-me}
       ACAPY_ADMIN_HOST: issuer-agent
       LOG_LEVEL: info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - issuer-agent
     networks:
@@ -150,6 +156,12 @@ services:
       ADMIN_API_KEY: ${VERIFIER_ADMIN_API_KEY:-verifier-api-key-change-me}
       ACAPY_ADMIN_HOST: verifier-agent
       LOG_LEVEL: info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - verifier-agent
     networks:
@@ -209,6 +221,12 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production-super-secret-key}
       DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
       LOG_LEVEL: info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       - holder-agent
       - postgres
