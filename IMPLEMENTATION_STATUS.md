@@ -124,21 +124,21 @@ Successfully implemented **Sprint 1-2** with full production-ready infrastructur
 
 #### Completed:
 - [x] **Dockerfile** - ACA-Py development mock
-- [x] **README.md** - Complete mobile wallet implementation guide
-  - Aries Credo/AFJ integration examples
-  - React Native code samples
-  - Android Keystore integration
-  - iOS Secure Enclave integration
+- [x] **README.md** - Complete web wallet implementation guide
+  - Aries Framework JavaScript integration examples
+  - React + TypeScript code samples
+  - Web Crypto API integration
+  - IndexedDB secure storage
   - BIP-39 mnemonic backup
   - Zero-knowledge proof examples
   - Architecture diagrams
 
 #### Pending:
-- ⏳ React Native mobile app implementation (Sprint 3)
-- ⏳ Aries Bifold/Credo integration (Sprint 3)
-- ⏳ TEE/Secure Element integration (Sprint 4)
+- ⏳ React web application implementation (Sprint 3)
+- ⏳ Aries Framework JavaScript integration (Sprint 3)
+- ⏳ Web Crypto API integration (Sprint 4)
 - ⏳ BIP-39 backup/recovery (Sprint 5)
-- ⏳ IPFS mobile integration (Sprint 6)
+- ⏳ IPFS web integration (Sprint 6)
 
 ### 6. Directory Structure (100%)
 ```
@@ -164,8 +164,7 @@ infrastructure/
 └── indy/           ⏳ Pending
 
 frontend/
-├── mobile/         ⏳ Sprint 3-4 (Aries Bifold)
-└── admin/          ⏳ Sprint 6 (Optional)
+└── web/            ⏳ Sprint 3-4 (React + Aries AFJ)
 
 docs/               ✅ Complete
 scripts/            ✅ Complete
@@ -270,7 +269,7 @@ Holder -------- Verifier
 |-----------|-----------|--------|
 | DID Registry | Hyperledger Indy (Plenum) | ✅ Configured |
 | Agent Framework | ACA-Py (Issuer/Verifier) | ✅ Implemented |
-| Mobile Agent | Aries Bifold/Credo | ⏳ Sprint 3-4 |
+| Web Wallet | React + Aries AFJ | ⏳ Sprint 3-4 |
 | Database | PostgreSQL 15 | ✅ Deployed |
 | Document Storage | IPFS (Kubo) | ✅ Deployed |
 | Container Orchestration | Docker Compose | ✅ Complete |
@@ -352,7 +351,7 @@ Holder -------- Verifier
 
 **Estimated Completion:** 
 - Sprint 1-2 (Infrastructure): 95% complete - 1-2 days remaining
-- Sprint 3-4 (Mobile Wallet): 0% complete - 6-8 days
+- Sprint 3-4 (Web Wallet): 0% complete - 6-8 days
 - Sprint 5-6 (Security & IPFS): 0% complete - 4-6 days
 - **Total MVP:** ~12-16 days
 
@@ -366,7 +365,7 @@ None yet - system not fully tested.
 
 ## 📝 Notes
 
-1. **Mobile Wallet Priority**: Real holder implementation requires React Native + Aries Bifold/Credo (Sprint 3-4)
+1. **Web Wallet Priority**: Real holder implementation requires React + Aries Framework JavaScript (Sprint 3-4)
 2. **Testing Required**: No integration tests written yet - critical for Sprint 2
 3. **IPFS Integration**: Not yet connected to agents - will be added in Sprint 6
 4. **Security Hardening**: Current configuration is development-only; production requires key rotation, TLS, HSM

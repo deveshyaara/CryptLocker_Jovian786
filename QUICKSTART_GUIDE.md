@@ -16,7 +16,7 @@ curl --version           # For health checks
 
 # Optional (for local development)
 python --version         # Python 3.11+ for running tests
-node --version           # Node.js 18+ for mobile wallet (Sprint 3+)
+node --version           # Node.js 18+ for web wallet (Sprint 3+)
 ```
 
 ---
@@ -166,7 +166,7 @@ curl -X POST http://localhost:8000/connections/create-invitation \
     "multi_use": false
   }'
 
-# Response includes invitation_url (QR code for mobile wallet)
+# Response includes invitation_url (link for web wallet)
 # {
 #   "connection_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
 #   "invitation_url": "http://example.com?c_i=eyJAdHlwZSI6Li4u",
@@ -426,12 +426,12 @@ docker logs -f ssi-postgres
 1. **Explore API Documentation**: http://localhost:8000/docs
 2. **Run Tests**: `pytest tests/ -v`
 3. **Read Implementation Guide**: See `IMPLEMENTATION_STATUS.md`
-4. **Start Sprint 3**: Begin mobile wallet implementation
+4. **Start Sprint 3**: Begin web wallet implementation
 
-### For Mobile Wallet Development (Sprint 3):
-1. Read: `frontend/mobile/MOBILE_WALLET_PLAN.md`
-2. Initialize React Native project
-3. Install Aries Credo SDK
+### For Web Wallet Development (Sprint 3):
+1. Read: `frontend/web/WEB_WALLET_PLAN.md`
+2. Initialize React project with Vite
+3. Install Aries Framework JavaScript
 4. Test connection with issuer/verifier
 
 ### For Production Deployment:
@@ -468,7 +468,7 @@ docker logs -f ssi-postgres
 - [ ] All health checks pass
 - [ ] Tests run successfully
 
-**If all checks pass: System is ready for Sprint 3 (Mobile Wallet)!** 🎉
+**If all checks pass: System is ready for Sprint 3 (Web Wallet)!** 🎉
 
 ---
 

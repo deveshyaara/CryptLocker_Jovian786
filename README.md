@@ -20,7 +20,7 @@ Empower individuals with complete ownership and control of their digital identit
 - 🔗 **W3C Standards Compliant**: DIDs and Verifiable Credentials
 - 🚫 **Revocation Support**: Real-time credential status checking
 - 🔐 **Military-Grade Cryptography**: Ed25519, AES-256, ChaCha20-Poly1305
-- 📱 **Cross-Platform**: Web and mobile wallet support
+- 🌐 **Web-Based Wallet**: React application with browser-native security
 
 ## 🚀 Quick Start
 
@@ -127,8 +127,7 @@ CryptLocker_Jovian786/
 │   ├── guides/               # How-to guides
 │   └── governance/           # Governance framework
 ├── frontend/                 # Frontend applications
-│   ├── wallet-ui/           # Web wallet
-│   └── mobile/              # Mobile wallet (React Native)
+│   └── web/                 # Web-based wallet (React + TypeScript)
 ├── infrastructure/           # Infrastructure as code
 │   ├── indy/                # Indy ledger setup
 │   ├── database/            # Database scripts
