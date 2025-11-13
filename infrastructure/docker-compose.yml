@@ -156,6 +156,64 @@ services:
       - ssi-network
     restart: unless-stopped
 
+  # Holder Agent (ACA-Py)
+  holder-agent:
+    build:
+      context: ../agents/holder
+      dockerfile: Dockerfile
+    container_name: ssi-holder-agent
+    ports:
+      - "8060:8060"  # Inbound transport
+      - "8070:8070"  # Admin API
+    environment:
+      AGENT_NAME: "Holder Wallet"
+      AGENT_PORT: 8060
+      ADMIN_PORT: 8070
+      ADMIN_API_KEY: ${HOLDER_ADMIN_API_KEY:-holder-api-key-change-me}
+      WALLET_NAME: holder-wallet
+      WALLET_KEY: ${HOLDER_WALLET_KEY:-holder-wallet-key-change-me}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
+      GENESIS_URL: "http://test.bcovrin.vonx.io/genesis"
+      LOG_LEVEL: info
+      IPFS_API_URL: "http://ipfs:5001"
+      IPFS_GATEWAY_URL: "http://ipfs:8080"
+      AIOHTTP_NO_EXTENSIONS: 1
+      PYTHONASYNCIODEBUG: 0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    networks:
+      - ssi-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Holder FastAPI Application
+  holder-api:
+    build:
+      context: ../agents/holder
+      dockerfile: Dockerfile
+    container_name: ssi-holder-api
+    entrypoint: []
+    command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8002", "--reload"]
+    working_dir: /app
+    ports:
+      - "8002:8002"
+    environment:
+      AGENT_NAME: "Holder Wallet"
+      ADMIN_PORT: 8070
+      ADMIN_API_KEY: ${HOLDER_ADMIN_API_KEY:-holder-api-key-change-me}
+      ACAPY_ADMIN_HOST: holder-agent
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production-super-secret-key}
+      LOG_LEVEL: info
+    depends_on:
+      - holder-agent
+    networks:
+      - ssi-network
+    restart: unless-stopped
+
 networks:
   ssi-network:
     driver: bridge
