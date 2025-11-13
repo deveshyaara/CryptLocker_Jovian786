@@ -62,14 +62,20 @@ export interface SendProofRequest {
 // Holder API functions
 export const holderApi = {
   /**
-   * Get wallet information
+   * Get wallet DID information
    */
-  async getWallet(token: string): Promise<Wallet> {
+  async getWallet(token?: string): Promise<{ did: string; wallet_id: string; owner_did?: string }> {
     try {
-      const response = await holderClient.get('/wallet', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
+      const config = token ? {
+        headers: { Authorization: `Bearer ${token}` }
+      } : {};
+      const response = await holderClient.get('/wallet/did', config);
+      // Map 'did' to 'owner_did' for backwards compatibility
+      const data = response.data;
+      return {
+        ...data,
+        owner_did: data.did || data.owner_did
+      };
     } catch (error) {
       throw new Error(handleApiError(error));
     }

@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.detail || error?.message || 'Login failed. Please check your credentials.';
+      const errorMessage = error?.message || 'Login failed. Please check your credentials.';
       toast({
         title: 'Login Failed',
         description: errorMessage,
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      const errorMessage = error?.response?.data?.detail || error?.message || 'Registration failed. Please try again.';
+      const errorMessage = error?.message || 'Registration failed. Please try again.';
       toast({
         title: 'Registration Failed',
         description: errorMessage,
@@ -175,8 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Auth refresh error:', error);
-      // If refresh fails, logout
-      logout();
+      // Don't logout on refresh error, token might still be valid
     }
   };
 
