@@ -98,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || 'Login failed. Please check your credentials.';
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Login failed. Please check your credentials.';
       toast({
         title: 'Login Failed',
         description: errorMessage,
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || 'Registration failed. Please try again.';
+      const errorMessage = error?.response?.data?.detail || error?.message || 'Registration failed. Please try again.';
       toast({
         title: 'Registration Failed',
         description: errorMessage,

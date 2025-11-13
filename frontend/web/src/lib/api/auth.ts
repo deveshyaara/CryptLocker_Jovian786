@@ -30,33 +30,25 @@ export const authApi = {
    * Login user
    */
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    try {
-      const formData = new FormData();
-      formData.append('username', credentials.username);
-      formData.append('password', credentials.password);
+    const formData = new FormData();
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
 
-      const response = await holderClient.post('/auth/login', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      
-      return response.data;
-    } catch (error) {
-      throw new Error(handleApiError(error));
-    }
+    const response = await holderClient.post('/auth/login', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return response.data;
   },
 
   /**
    * Register new user
    */
   async register(data: RegisterRequest): Promise<AuthResponse> {
-    try {
-      const response = await holderClient.post('/auth/register', data);
-      return response.data;
-    } catch (error) {
-      throw new Error(handleApiError(error));
-    }
+    const response = await holderClient.post('/auth/register', data);
+    return response.data;
   },
 
   /**
