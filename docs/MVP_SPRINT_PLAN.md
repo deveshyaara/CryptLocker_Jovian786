@@ -917,7 +917,7 @@ artillery run tests/load/credential_issuance.yml
 ## Post-MVP Roadmap
 
 ### Week 2: Enhancements
-- Mobile wallet (React Native)
+- Web wallet PWA features
 - Advanced ZKP predicates
 - Credential templates
 - Bulk issuance

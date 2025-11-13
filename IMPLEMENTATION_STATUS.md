@@ -215,32 +215,33 @@ open http://localhost:8080
 - [ ] Performance benchmarks
 - [ ] Error handling validation
 
-### Sprint 3: Mobile Wallet Foundation
-- [ ] React Native project setup
-- [ ] Aries Credo (AFJ) agent initialization
-- [ ] QR code scanner for invitations
-- [ ] Basic UI (Home, Credentials, Connections)
+### Sprint 3: Web Wallet Foundation
+- [ ] React + TypeScript project setup with Vite
+- [ ] Aries Framework JavaScript agent initialization
+- [ ] QR code scanner for invitations (html5-qrcode)
+- [ ] Basic UI (Dashboard, Credentials, Connections)
 - [ ] DIDComm connection handling
 
 ### Sprint 4: Credential Exchange
-- [ ] Credential offer handling in mobile wallet
-- [ ] Credential storage with encryption
+- [ ] Credential offer handling in web wallet
+- [ ] Credential storage with IndexedDB encryption
 - [ ] Proof request handling
 - [ ] Zero-knowledge proof generation
 - [ ] Selective disclosure UI
 
 ### Sprint 5: Security & Recovery
-- [ ] Android Keystore integration
-- [ ] iOS Secure Enclave integration
+- [ ] Web Crypto API integration
+- [ ] Session management with JWT
 - [ ] BIP-39 mnemonic generation
 - [ ] Wallet backup/recovery flow
-- [ ] Biometric authentication
+- [ ] Content Security Policy implementation
 
 ### Sprint 6: IPFS & Advanced Features
-- [ ] IPFS document storage in mobile wallet
+- [ ] IPFS document storage in web wallet
 - [ ] Document retrieval via CID
 - [ ] Revocation check UI
 - [ ] Credential expiration handling
+- [ ] Progressive Web App (PWA) setup
 - [ ] Admin dashboard (optional)
 
 ---
@@ -255,13 +256,13 @@ open http://localhost:8080
        /      \
       /        \
 Holder -------- Verifier
-(Mobile)    Presents Proof
+(Web)      Presents Proof
 ```
 
 **Status:**
 - Issuer: ✅ Implemented (ACA-Py + FastAPI)
 - Verifier: ✅ Implemented (ACA-Py + FastAPI)
-- Holder: ⏳ Mock ready, mobile wallet pending
+- Holder: ⏳ Mock ready, web wallet pending
 
 ### Technology Stack Status
 
@@ -274,9 +275,9 @@ Holder -------- Verifier
 | Document Storage | IPFS (Kubo) | ✅ Deployed |
 | Container Orchestration | Docker Compose | ✅ Complete |
 | Backend API | FastAPI | ✅ Implemented |
-| Mobile Framework | React Native | ⏳ Sprint 3 |
+| Frontend Framework | React + TypeScript | ⏳ Sprint 3 |
 | Cryptography | AnonCreds + ZKP | ✅ Via ACA-Py |
-| Secure Storage | Android Keystore/Secure Enclave | ⏳ Sprint 5 |
+| Browser Security | Web Crypto API + IndexedDB | ⏳ Sprint 5 |
 
 ---
 
@@ -311,7 +312,7 @@ Holder -------- Verifier
 ### Pending:
 - ⏳ JWT authentication for frontend
 - ⏳ Rate limiting
-- ⏳ TEE/Secure Element for mobile wallet
+- ⏳ Web Crypto API for secure key storage
 - ⏳ BIP-39 mnemonic backup
 - ⏳ Security audit
 
@@ -329,8 +330,8 @@ Holder -------- Verifier
 7. Document any issues
 
 ### Priority 2: Begin Sprint 3
-1. Initialize React Native project in `frontend/mobile/`
-2. Install Aries Credo dependencies
+1. Initialize React project with Vite in `frontend/web/`
+2. Install Aries Framework JavaScript dependencies
 3. Implement agent initialization
 4. Build QR scanner for connection invitations
 5. Test connection flow with Issuer

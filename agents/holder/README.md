@@ -1,5 +1,9 @@
-# Mobile Wallet Implementation Guide
+# Mobile Wallet Implementation Guide (LEGACY REFERENCE)
 # Aries Bifold/Credo Integration for Holder Agent
+
+> **⚠️ NOTE**: This project has moved to a **web-based wallet** architecture using React + Aries Framework JavaScript.  
+> See `frontend/web/WEB_WALLET_PLAN.md` for the current implementation plan.  
+> This file is preserved as a reference for potential future mobile development.
 
 This directory contains documentation and mock implementation for holder agent functionality.
 

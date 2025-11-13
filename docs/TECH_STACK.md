@@ -252,9 +252,10 @@ CREATE TABLE credentials (
 
 **Why React?**
 - ✅ Largest ecosystem
-- ✅ React Native for mobile
-- ✅ Excellent tooling (Vite, Next.js)
+- ✅ Web-based for cross-platform compatibility
+- ✅ Excellent tooling (Vite, bundlers)
 - ✅ Strong typing with TypeScript
+- ✅ Progressive Web App (PWA) capabilities
 
 **Dependencies**:
 ```json
@@ -284,26 +285,47 @@ CREATE TABLE credentials (
 }
 ```
 
-### Mobile: React Native 0.72+
+### Web Wallet Security: Web Crypto API + IndexedDB
 
-**Why React Native?**
-- ✅ Code sharing with web wallet
-- ✅ Native secure storage (Keychain/Keystore)
+**Why Web-based approach?**
+- ✅ Cross-platform: Works on desktop and mobile browsers
+- ✅ Browser-native security (Web Crypto API)
+- ✅ No app store deployment
 - ✅ Aries Framework JavaScript support
-- ✅ Active community
+- ✅ Progressive Web App capabilities
+
+**Key Technologies**:
+```typescript
+// Web Crypto API for key generation
+const keyPair = await crypto.subtle.generateKey(
+  {
+    name: "Ed25519",
+    namedCurve: "Ed25519"
+  },
+  true,
+  ["sign", "verify"]
+);
+
+// IndexedDB for encrypted storage
+import { openDB } from 'idb';
+const db = await openDB('wallet-db', 1);
+
+// Aries Framework JavaScript
+import { Agent } from '@aries-framework/core';
+import { AskarModule } from '@aries-framework/askar';
+```
 
 **Key Libraries**:
 ```json
 {
   "dependencies": {
-    "react-native": "0.72.0",
-    "@aries-framework/react-native": "^0.4.0",
-    "react-native-fs": "^2.20.0",
-    "react-native-keychain": "^8.1.0",
-    "react-native-get-random-values": "^1.9.0",
-    "@react-navigation/native": "^6.1.0",
-    "react-native-qrcode-scanner": "^1.5.0",
-    "react-native-camera": "^4.2.0"
+    "@aries-framework/core": "^0.4.0",
+    "@aries-framework/node": "^0.4.0",
+    "@aries-framework/askar": "^0.4.0",
+    "idb": "^7.1.1",
+    "html5-qrcode": "^2.3.8",
+    "qrcode": "^1.5.3",
+    "bip39": "^3.1.0"
   }
 }
 ```

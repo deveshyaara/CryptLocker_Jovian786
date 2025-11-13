@@ -89,7 +89,7 @@ def test_file_structure():
         "README.md",
         "IMPLEMENTATION_STATUS.md",
         "QUICKSTART_GUIDE.md",
-        "frontend/mobile/MOBILE_WALLET_PLAN.md",
+        "frontend/web/WEB_WALLET_PLAN.md",
     ]
     
     for file_path in required_files:

@@ -269,7 +269,7 @@ pytest tests/ -v
 ### Next Steps
 1. **Start Services**: Run `bash infrastructure/scripts/start-system.sh`
 2. **Run Integration Tests**: Execute `pytest tests/ -v` with services running
-3. **Begin Sprint 3**: Start mobile wallet implementation
+3. **Begin Sprint 3**: Start web wallet implementation
 4. **Production Setup**: Configure TLS, monitoring, backups
 
 ---
@@ -303,7 +303,7 @@ All validation tests passed successfully:
 - ✅ Local development
 - ✅ Docker deployment
 - ✅ Integration testing (with services running)
-- ✅ Sprint 3 mobile wallet development
+- ✅ Sprint 3 web wallet development
 
 ---
 

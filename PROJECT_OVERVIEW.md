@@ -22,7 +22,7 @@ A Self-Sovereign Identity (SSI) framework empowering users with full ownership a
 - ✅ Blockchain-based DID Registry (Hyperledger Indy)
 - ✅ Verifiable Credentials issuance and verification
 - ✅ Selective disclosure with ZKPs
-- ✅ Cross-platform wallet (mobile/web)
+- ✅ Web-based wallet (React + TypeScript)
 - ✅ Decentralized file storage (IPFS)
 - ✅ Revocation and lifecycle management
 
@@ -59,7 +59,7 @@ A Self-Sovereign Identity (SSI) framework empowering users with full ownership a
 | Actor | Role | Technology |
 |-------|------|------------|
 | **Issuer** | Creates and digitally signs Verifiable Credentials | Hyperledger Aries Cloud Agent (Python) |
-| **Holder** | Stores private keys and VCs, presents selective disclosures | Aries Mobile Agent SDK |
+| **Holder** | Stores private keys and VCs, presents selective disclosures | React Web Wallet + Aries Framework JavaScript |
 | **Verifier** | Requests and verifies cryptographic proofs | Hyperledger Aries Verification Agent |
 
 ## 🛠️ Technology Stack
@@ -78,10 +78,10 @@ A Self-Sovereign Identity (SSI) framework empowering users with full ownership a
 ### Development Stack
 
 - **Backend**: Python 3.11+ (Aries Cloud Agent Python - ACA-Py)
-- **Frontend**: React Native (cross-platform wallet)
+- **Frontend**: React 18+ with TypeScript (web-based wallet)
 - **Database**: PostgreSQL (wallet storage), Indy Ledger (DIDs)
 - **Container**: Docker & Docker Compose
-- **Testing**: pytest, Jest, Detox (E2E)
+- **Testing**: pytest, Jest, Playwright (E2E)
 - **CI/CD**: GitHub Actions
 
 ## 📋 MVP Feature Set
