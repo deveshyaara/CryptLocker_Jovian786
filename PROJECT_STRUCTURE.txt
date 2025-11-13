@@ -1,0 +1,60 @@
+.
+├── DEVELOPMENT_RULES.md
+├── LICENSE
+├── PROJECT_COMPLETE.md
+├── PROJECT_OVERVIEW.md
+├── PROJECT_STRUCTURE.txt
+├── QUICKSTART.md
+├── README.md
+├── agents
+│   ├── holder
+│   │   ├── config
+│   │   ├── controllers
+│   │   ├── models
+│   │   ├── repositories
+│   │   ├── services
+│   │   ├── tests
+│   │   └── utils
+│   ├── issuer
+│   │   ├── config
+│   │   ├── controllers
+│   │   ├── models
+│   │   ├── repositories
+│   │   ├── services
+│   │   ├── tests
+│   │   └── utils
+│   └── verifier
+│       ├── config
+│       ├── controllers
+│       ├── models
+│       ├── repositories
+│       ├── services
+│       ├── tests
+│       └── utils
+├── config
+├── docker-compose.yml
+├── docs
+│   ├── DATA_MODELS.md
+│   ├── MVP_SPRINT_PLAN.md
+│   ├── SECURITY_GOVERNANCE.md
+│   ├── SETUP.md
+│   ├── TECH_STACK.md
+│   ├── api
+│   ├── architecture
+│   ├── governance
+│   └── guides
+├── frontend
+│   ├── mobile
+│   │   └── src
+│   └── wallet-ui
+│       └── src
+├── infrastructure
+│   ├── database
+│   ├── indy
+│   └── ipfs
+├── scripts
+│   ├── check_services.sh
+│   └── setup.sh
+└── tests
+
+43 directories, 15 files

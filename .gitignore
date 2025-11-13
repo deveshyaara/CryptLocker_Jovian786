@@ -1,0 +1,130 @@
+# .gitignore for SSI Project
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Secrets and Keys
+keys/
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Wallets
+*.wallet
+*_wallet/
+.aries_cloudagent/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+migrations/versions/*_auto_*.py
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Backup Files
+backups/
+*.bak
+*.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+.yarn-integrity
+
+# React / Vite
+dist/
+.vite/
+*.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Indy
+pool_transactions_genesis
+genesis.txn
+*.txn
+
+# IPFS
+.ipfs/
+ipfs_data/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+.coverage
+coverage/
+*.cover
+.pytest_cache/
+test-results/
+playwright-report/
+
+# Documentation (generated)
+docs/_build/
+docs/api/generated/
+
+# CI/CD
+.github/workflows/secrets.yml

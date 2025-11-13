@@ -1,0 +1,159 @@
+services:
+  # PostgreSQL Database for Agents
+  postgres:
+    image: postgres:15-alpine
+    container_name: ssi-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres123}
+      POSTGRES_DB: ${POSTGRES_DB:-wallet_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ssi-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # IPFS Node for Document Storage
+  ipfs:
+    image: ipfs/kubo:latest
+    container_name: ssi-ipfs
+    ports:
+      - "5001:5001"  # API
+      - "8080:8080"  # Gateway
+      - "4001:4001"  # Swarm
+    volumes:
+      - ipfs_data:/data/ipfs
+      - ipfs_staging:/export
+    networks:
+      - ssi-network
+    environment:
+      - IPFS_PROFILE=server
+    healthcheck:
+      test: ["CMD-SHELL", "ipfs id || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Issuer Agent (ACA-Py)
+  issuer-agent:
+    build:
+      context: ./agents/issuer
+      dockerfile: Dockerfile
+    container_name: ssi-issuer-agent
+    ports:
+      - "8020:8020"  # Inbound transport
+      - "8030:8030"  # Admin API
+    environment:
+      AGENT_NAME: "University Issuer"
+      AGENT_PORT: 8020
+      ADMIN_PORT: 8030
+      ADMIN_API_KEY: ${ISSUER_ADMIN_API_KEY:-issuer-api-key-change-me}
+      WALLET_NAME: issuer-wallet
+      WALLET_KEY: ${ISSUER_WALLET_KEY:-issuer-wallet-key-change-me}
+      PUBLIC_DID_SEED: ${ISSUER_DID_SEED:-000000000000000000000000Issuer01}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
+      GENESIS_URL: "http://host.docker.internal:9000/genesis"
+      LOG_LEVEL: info
+      IPFS_API_URL: "http://ipfs:5001"
+      IPFS_GATEWAY_URL: "http://ipfs:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    networks:
+      - ssi-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Verifier Agent (ACA-Py)
+  verifier-agent:
+    build:
+      context: ./agents/verifier
+      dockerfile: Dockerfile
+    container_name: ssi-verifier-agent
+    ports:
+      - "8040:8040"  # Inbound transport
+      - "8050:8050"  # Admin API
+    environment:
+      AGENT_NAME: "Employer Verifier"
+      AGENT_PORT: 8040
+      ADMIN_PORT: 8050
+      ADMIN_API_KEY: ${VERIFIER_ADMIN_API_KEY:-verifier-api-key-change-me}
+      WALLET_NAME: verifier-wallet
+      WALLET_KEY: ${VERIFIER_WALLET_KEY:-verifier-wallet-key-change-me}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
+      GENESIS_URL: "http://host.docker.internal:9000/genesis"
+      LOG_LEVEL: info
+      IPFS_API_URL: "http://ipfs:5001"
+      IPFS_GATEWAY_URL: "http://ipfs:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    networks:
+      - ssi-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Issuer FastAPI Application
+  issuer-api:
+    build:
+      context: ./agents/issuer
+      dockerfile: Dockerfile
+    container_name: ssi-issuer-api
+    command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    ports:
+      - "8000:8000"
+    environment:
+      AGENT_NAME: "University Issuer"
+      ADMIN_PORT: 8030
+      ADMIN_API_KEY: ${ISSUER_ADMIN_API_KEY:-issuer-api-key-change-me}
+      LOG_LEVEL: info
+    depends_on:
+      - issuer-agent
+    networks:
+      - ssi-network
+    restart: unless-stopped
+
+  # Verifier FastAPI Application
+  verifier-api:
+    build:
+      context: ./agents/verifier
+      dockerfile: Dockerfile
+    container_name: ssi-verifier-api
+    command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
+    ports:
+      - "8001:8001"
+    environment:
+      AGENT_NAME: "Employer Verifier"
+      ADMIN_PORT: 8050
+      ADMIN_API_KEY: ${VERIFIER_ADMIN_API_KEY:-verifier-api-key-change-me}
+      LOG_LEVEL: info
+    depends_on:
+      - verifier-agent
+    networks:
+      - ssi-network
+    restart: unless-stopped
+
+networks:
+  ssi-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  ipfs_data:
+    driver: local
+  ipfs_staging:
+    driver: local

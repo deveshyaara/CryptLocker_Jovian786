@@ -1,0 +1,181 @@
+# Docker Compose for SSI System
+version: '3.8'
+
+services:
+  # Indy Ledger (von-network)
+  indy-pool:
+    image: bcgovimages/von-network:latest
+    container_name: ssi-indy-pool
+    ports:
+      - "9000:8000"  # Web interface
+      - "9701-9708:9701-9708"  # Node ports
+    networks:
+      - ssi-network
+    environment:
+      - IP=0.0.0.0
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: ssi-postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - ssi-network
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # IPFS Node
+  ipfs:
+    image: ipfs/kubo:v0.27.0
+    container_name: ssi-ipfs
+    ports:
+      - "4001:4001"  # Swarm
+      - "5001:5001"  # API
+      - "8080:8080"  # Gateway
+    networks:
+      - ssi-network
+    volumes:
+      - ipfs_data:/data/ipfs
+    environment:
+      - IPFS_PROFILE=server
+    healthcheck:
+      test: ["CMD", "ipfs", "id"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Issuer Agent
+  issuer-agent:
+    build:
+      context: ./agents/issuer
+      dockerfile: Dockerfile
+    container_name: ssi-issuer-agent
+    ports:
+      - "${ISSUER_AGENT_PORT:-8020}:8020"
+      - "${ISSUER_ADMIN_PORT:-8030}:8030"
+    networks:
+      - ssi-network
+    environment:
+      AGENT_NAME: issuer-agent
+      AGENT_PORT: 8020
+      ADMIN_PORT: 8030
+      ADMIN_API_KEY: ${API_KEY_ISSUER}
+      WALLET_NAME: issuer-wallet
+      WALLET_KEY: ${WALLET_KEY}
+      WALLET_TYPE: askar
+      GENESIS_URL: http://indy-pool:8000/genesis
+      PUBLIC_DID_SEED: ${ISSUER_DID_SEED}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      AUTO_ACCEPT_REQUESTS: ${AUTO_ACCEPT_REQUESTS:-false}
+    depends_on:
+      indy-pool:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    volumes:
+      - issuer_wallet:/home/aries/.aries_cloudagent
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8030/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Holder Agent
+  holder-agent:
+    build:
+      context: ./agents/holder
+      dockerfile: Dockerfile
+    container_name: ssi-holder-agent
+    ports:
+      - "${HOLDER_AGENT_PORT:-8021}:8021"
+      - "${HOLDER_ADMIN_PORT:-8031}:8031"
+    networks:
+      - ssi-network
+    environment:
+      AGENT_NAME: holder-agent
+      AGENT_PORT: 8021
+      ADMIN_PORT: 8031
+      WALLET_NAME: holder-wallet
+      WALLET_KEY: ${WALLET_KEY}
+      WALLET_TYPE: askar
+      GENESIS_URL: http://indy-pool:8000/genesis
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      indy-pool:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - holder_wallet:/home/aries/.aries_cloudagent
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8031/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Verifier Agent
+  verifier-agent:
+    build:
+      context: ./agents/verifier
+      dockerfile: Dockerfile
+    container_name: ssi-verifier-agent
+    ports:
+      - "${VERIFIER_AGENT_PORT:-8022}:8022"
+      - "${VERIFIER_ADMIN_PORT:-8032}:8032"
+    networks:
+      - ssi-network
+    environment:
+      AGENT_NAME: verifier-agent
+      AGENT_PORT: 8022
+      ADMIN_PORT: 8032
+      ADMIN_API_KEY: ${API_KEY_VERIFIER}
+      WALLET_NAME: verifier-wallet
+      WALLET_KEY: ${WALLET_KEY}
+      WALLET_TYPE: askar
+      GENESIS_URL: http://indy-pool:8000/genesis
+      PUBLIC_DID_SEED: ${VERIFIER_DID_SEED}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    depends_on:
+      indy-pool:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      - verifier_wallet:/home/aries/.aries_cloudagent
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8032/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  ssi-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  ipfs_data:
+  issuer_wallet:
+  holder_wallet:
+  verifier_wallet:
