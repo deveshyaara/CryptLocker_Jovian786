@@ -62,7 +62,7 @@ class DatabaseService:
             logger.info("Database connection pool closed")
     
     async def create_user(self, username: str, email: str, hashed_password: str, 
-                         full_name: str, did: Optional[str] = None) -> Dict:
+                         full_name: Optional[str] = None, did: Optional[str] = None) -> Dict:
         """
         Create a new user
         
@@ -70,7 +70,7 @@ class DatabaseService:
             username: User's username
             email: User's email
             hashed_password: Hashed password
-            full_name: User's full name
+            full_name: User's full name (optional)
             did: Decentralized identifier (optional)
             
         Returns:

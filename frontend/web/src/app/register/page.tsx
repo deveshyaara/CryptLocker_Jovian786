@@ -16,7 +16,6 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +43,6 @@ export default function RegisterPage() {
         username,
         email,
         password,
-        full_name: fullName || undefined,
       });
     } catch (error) {
       console.error('Registration error:', error);
@@ -89,16 +87,6 @@ export default function RegisterPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  disabled={loading}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="full-name">Full Name (Optional)</Label>
-                <Input 
-                  id="full-name" 
-                  placeholder="John Doe"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
                   disabled={loading}
                 />
               </div>

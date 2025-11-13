@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import {
   Bell,
@@ -29,6 +31,7 @@ import {
 } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Separator } from '../ui/separator';
+import { useAuth } from '@/lib/contexts/auth-context';
 
 const notifications = [
     { title: "New Credential Offer", description: "MIT issued you a 'University Degree'.", time: "5m ago"},
@@ -37,7 +40,15 @@ const notifications = [
 ];
 
 export function AppHeader() {
+  const { user, logout } = useAuth();
   const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar-1');
+  
+  const getUserInitials = () => {
+    if (user?.username) {
+      return user.username.substring(0, 2).toUpperCase();
+    }
+    return 'U';
+  };
   return (
     <header className="flex h-16 shrink-0 items-center gap-4 border-b bg-card px-4 md:px-6">
       <SidebarTrigger className="md:hidden" />
@@ -95,7 +106,7 @@ export function AppHeader() {
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="h-9 w-9">
                 {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User Avatar" />}
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarFallback>{getUserInitials()}</AvatarFallback>
               </Avatar>
               <span className="sr-only">Toggle user menu</span>
             </Button>
@@ -103,9 +114,9 @@ export function AppHeader() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">John Doe</p>
+                <p className="text-sm font-medium leading-none">{user?.username || 'User'}</p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  johndoe@example.com
+                  {user?.email || 'user@example.com'}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -120,8 +131,8 @@ export function AppHeader() {
               <Link href="/help"><LifeBuoy className="mr-2" /> Help & Support</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/"><LogOut className="mr-2" /> Logout</Link>
+            <DropdownMenuItem onClick={logout}>
+              <LogOut className="mr-2" /> Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
