@@ -39,8 +39,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Admin URL for ACA-Py
-ADMIN_URL = f"http://localhost:{config.ADMIN_PORT}"
+# Admin URL for ACA-Py - Use environment variable or default to localhost
+ADMIN_HOST = os.getenv("ACAPY_ADMIN_HOST", "localhost")
+ADMIN_URL = f"http://{ADMIN_HOST}:{config.ADMIN_PORT}"
 
 # Service instances
 did_service = DIDService(ADMIN_URL, config.ADMIN_API_KEY)

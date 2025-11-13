@@ -1,4 +1,26 @@
 services:
+  # Indy Ledger (von-network) - Local development ledger
+  indy-ledger:
+    image: ghcr.io/bcgov/von-network:sha-f769dad
+    container_name: ssi-indy-ledger
+    command: start --indy-txn-log-dir=/home/indy/ledger/sandbox/data --genesis-url http://0.0.0.0:9000/genesis
+    ports:
+      - "9000:9000"  # Web server / genesis
+      - "9701-9708:9701-9708"  # Node ports
+    volumes:
+      - indy_ledger_data:/home/indy/ledger
+    networks:
+      - ssi-network
+    environment:
+      - DOCKERHOST=${DOCKERHOST:-host.docker.internal}
+      - LOG_LEVEL=INFO
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
   # PostgreSQL Database for Agents
   postgres:
     image: postgres:15-alpine
@@ -59,11 +81,13 @@ services:
       WALLET_KEY: ${ISSUER_WALLET_KEY:-issuer-wallet-key-change-me}
       PUBLIC_DID_SEED: ${ISSUER_DID_SEED:-000000000000000000000000Issuer01}
       DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
-      GENESIS_URL: "http://host.docker.internal:9000/genesis"
+      GENESIS_URL: "http://indy-ledger:9000/genesis"
       LOG_LEVEL: info
       IPFS_API_URL: "http://ipfs:5001"
       IPFS_GATEWAY_URL: "http://ipfs:8080"
     depends_on:
+      indy-ledger:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       ipfs:
@@ -91,11 +115,13 @@ services:
       WALLET_NAME: verifier-wallet
       WALLET_KEY: ${VERIFIER_WALLET_KEY:-verifier-wallet-key-change-me}
       DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
-      GENESIS_URL: "http://host.docker.internal:9000/genesis"
+      GENESIS_URL: "http://indy-ledger:9000/genesis"
       LOG_LEVEL: info
       IPFS_API_URL: "http://ipfs:5001"
       IPFS_GATEWAY_URL: "http://ipfs:8080"
     depends_on:
+      indy-ledger:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       ipfs:
@@ -119,6 +145,7 @@ services:
       AGENT_NAME: "University Issuer"
       ADMIN_PORT: 8030
       ADMIN_API_KEY: ${ISSUER_ADMIN_API_KEY:-issuer-api-key-change-me}
+      ACAPY_ADMIN_HOST: issuer-agent
       LOG_LEVEL: info
     depends_on:
       - issuer-agent
@@ -139,6 +166,7 @@ services:
       AGENT_NAME: "Employer Verifier"
       ADMIN_PORT: 8050
       ADMIN_API_KEY: ${VERIFIER_ADMIN_API_KEY:-verifier-api-key-change-me}
+      ACAPY_ADMIN_HOST: verifier-agent
       LOG_LEVEL: info
     depends_on:
       - verifier-agent
@@ -151,6 +179,8 @@ networks:
     driver: bridge
 
 volumes:
+  indy_ledger_data:
+    driver: local
   postgres_data:
     driver: local
   ipfs_data:
