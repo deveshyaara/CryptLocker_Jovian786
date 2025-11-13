@@ -33,7 +33,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infrastructure/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./infrastructure/postgres/holder_schema.sql:/docker-entrypoint-initdb.d/holder_schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
@@ -165,6 +166,35 @@ services:
       - verifier_wallet:/home/aries/.aries_cloudagent
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8032/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Frontend Web Application
+  frontend-web:
+    build:
+      context: ./frontend/web
+      dockerfile: Dockerfile
+    container_name: ssi-frontend-web
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - ssi-network
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_HOLDER_API_URL: http://holder-agent:8031
+      NEXT_PUBLIC_ISSUER_API_URL: http://issuer-agent:8030
+      NEXT_PUBLIC_VERIFIER_API_URL: http://verifier-agent:8032
+      NEXT_PUBLIC_API_URL: http://holder-agent:8031
+    depends_on:
+      holder-agent:
+        condition: service_healthy
+      issuer-agent:
+        condition: service_healthy
+      verifier-agent:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 5
