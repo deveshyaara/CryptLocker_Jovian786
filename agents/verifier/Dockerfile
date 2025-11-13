@@ -32,9 +32,9 @@ USER aries
 # Expose ports
 EXPOSE 8040 8050
 
-# Health check - check both agent admin API and FastAPI
+# Health check - check agent admin API
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8001/health 2>/dev/null || exit 1
+    CMD curl -f -H "X-API-KEY: ${ADMIN_API_KEY}" http://localhost:${ADMIN_PORT}/status 2>/dev/null || exit 1
 
 # Entry point
 ENTRYPOINT ["/bin/bash", "-c"]
