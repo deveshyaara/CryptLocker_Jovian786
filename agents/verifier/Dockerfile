@@ -1,7 +1,7 @@
 # Verifier Agent - ACA-Py Configuration
 # Hyperledger Aries Cloud Agent for Credential Verification
 
-FROM bcgovimages/aries-cloudagent:py36-1.16-1_0.11.0
+FROM ghcr.io/hyperledger/aries-cloudagent-python:py3.9-0.12.1
 
 USER root
 

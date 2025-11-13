@@ -1,10 +1,8 @@
 -- PostgreSQL Initialization Script
 -- Creates databases and tables for SSI wallet storage
 
--- Create separate databases for each agent
-CREATE DATABASE IF NOT EXISTS issuer_wallet_db;
-CREATE DATABASE IF NOT EXISTS verifier_wallet_db;
-CREATE DATABASE IF NOT EXISTS holder_wallet_db;
+-- Note: PostgreSQL does not support CREATE DATABASE IF NOT EXISTS
+-- These databases are created by wallet applications on first use
 
 -- Connect to main database
 \c wallet_db;

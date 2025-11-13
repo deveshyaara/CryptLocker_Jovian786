@@ -11,7 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - ssi-network
     healthcheck:
@@ -44,7 +44,7 @@ services:
   # Issuer Agent (ACA-Py)
   issuer-agent:
     build:
-      context: ./agents/issuer
+      context: ../agents/issuer
       dockerfile: Dockerfile
     container_name: ssi-issuer-agent
     ports:
@@ -77,7 +77,7 @@ services:
   # Verifier Agent (ACA-Py)
   verifier-agent:
     build:
-      context: ./agents/verifier
+      context: ../agents/verifier
       dockerfile: Dockerfile
     container_name: ssi-verifier-agent
     ports:
@@ -109,7 +109,7 @@ services:
   # Issuer FastAPI Application
   issuer-api:
     build:
-      context: ./agents/issuer
+      context: ../agents/issuer
       dockerfile: Dockerfile
     container_name: ssi-issuer-api
     command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
@@ -129,7 +129,7 @@ services:
   # Verifier FastAPI Application
   verifier-api:
     build:
-      context: ./agents/verifier
+      context: ../agents/verifier
       dockerfile: Dockerfile
     container_name: ssi-verifier-api
     command: ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
