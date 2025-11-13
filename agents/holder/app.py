@@ -15,6 +15,7 @@ from services.auth_service import AuthService
 from services.wallet_service import WalletService
 from services.connection_service import ConnectionService
 from services.credential_service import CredentialService
+from services.database_service import db_service
 from models.user import User, UserCreate, UserLogin, Token
 from models.connection import ConnectionCreate, Connection
 from models.credential import CredentialStored
@@ -54,10 +55,6 @@ auth_service = AuthService()
 wallet_service = WalletService(ADMIN_URL, config.ADMIN_API_KEY)
 connection_service = ConnectionService(ADMIN_URL, config.ADMIN_API_KEY)
 credential_service = CredentialService(ADMIN_URL, config.ADMIN_API_KEY)
-
-# In-memory user storage (replace with database in production)
-users_db: Dict[int, Dict] = {}
-user_id_counter = 1
 
 
 # ==================== Dependencies ====================
@@ -118,21 +115,6 @@ async def register(user_data: UserCreate):
     Returns:
         JWT token and user information
     """
-    global user_id_counter
-    
-    # Check if username already exists
-    for user in users_db.values():
-        if user["username"] == user_data.username:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already registered"
-            )
-        if user["email"] == user_data.email:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Email already registered"
-            )
-    
     # Hash password
     hashed_password = auth_service.hash_password(user_data.password)
     
@@ -144,28 +126,29 @@ async def register(user_data: UserCreate):
         logger.error(f"Failed to create DID: {str(e)}")
         did = None
     
-    # Create user
-    user_id = user_id_counter
-    user_id_counter += 1
-    
-    from datetime import datetime
-    user = {
-        "id": user_id,
-        "username": user_data.username,
-        "email": user_data.email,
-        "full_name": user_data.full_name,
-        "hashed_password": hashed_password,
-        "did": did,
-        "wallet_id": config.WALLET_NAME,
-        "is_active": True,
-        "created_at": datetime.utcnow(),
-        "updated_at": datetime.utcnow()
-    }
-    
-    users_db[user_id] = user
+    # Create user in database
+    try:
+        user = await db_service.create_user(
+            username=user_data.username,
+            email=user_data.email,
+            hashed_password=hashed_password,
+            full_name=user_data.full_name,
+            did=did
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        logger.error(f"User creation failed: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create user"
+        )
     
     # Create JWT token
-    token = auth_service.create_access_token(user_id, user_data.username)
+    token = auth_service.create_access_token(user["id"], user["username"])
     
     # Remove sensitive data
     user_response = {k: v for k, v in user.items() if k != "hashed_password"}
@@ -190,12 +173,8 @@ async def login(credentials: UserLogin):
     Returns:
         JWT token and user information
     """
-    # Find user
-    user = None
-    for u in users_db.values():
-        if u["username"] == credentials.username:
-            user = u
-            break
+    # Find user in database
+    user = await db_service.get_user_by_username(credentials.username)
     
     if not user:
         raise HTTPException(
@@ -244,7 +223,7 @@ async def get_current_user_info(current_user: Dict = Depends(get_current_user)):
         User information
     """
     user_id = current_user["user_id"]
-    user = users_db.get(user_id)
+    user = await db_service.get_user_by_id(user_id)
     
     if not user:
         raise HTTPException(
@@ -271,7 +250,7 @@ async def get_wallet_did(current_user: Dict = Depends(get_current_user)):
         DID information
     """
     user_id = current_user["user_id"]
-    user = users_db.get(user_id)
+    user = await db_service.get_user_by_id(user_id)
     
     if not user or not user.get("did"):
         raise HTTPException(

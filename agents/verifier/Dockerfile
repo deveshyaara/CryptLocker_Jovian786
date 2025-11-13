@@ -32,9 +32,9 @@ USER aries
 # Expose ports
 EXPOSE 8040 8050
 
-# Health check
+# Health check - check both agent admin API and FastAPI
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8050/status || exit 1
+    CMD curl -f http://localhost:8001/health 2>/dev/null || exit 1
 
 # Entry point
 ENTRYPOINT ["/bin/bash", "-c"]
@@ -49,10 +49,11 @@ CMD ["aca-py start \
     --wallet-storage-type default \
     --genesis-url ${GENESIS_URL} \
     --endpoint http://verifier-agent:${AGENT_PORT} \
-    --label '${AGENT_NAME}' \
+    --label \"${AGENT_NAME}\" \
     --public-invites \
     --auto-provision \
     --auto-ping-connection \
     --monitor-ping \
-    --log-level ${LOG_LEVEL:-info} \
-    --auto-verify-presentation"]
+    --auto-verify-presentation \
+    --log-level ${LOG_LEVEL:-info}"]
+

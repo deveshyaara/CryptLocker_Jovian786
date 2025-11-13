@@ -207,9 +207,11 @@ services:
       ADMIN_API_KEY: ${HOLDER_ADMIN_API_KEY:-holder-api-key-change-me}
       ACAPY_ADMIN_HOST: holder-agent
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production-super-secret-key}
+      DATABASE_URL: "postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres123}@postgres:5432/${POSTGRES_DB:-wallet_db}"
       LOG_LEVEL: info
     depends_on:
       - holder-agent
+      - postgres
     networks:
       - ssi-network
     restart: unless-stopped

@@ -37,9 +37,9 @@ USER aries
 # Expose ports
 EXPOSE 8060 8070
 
-# Health check
+# Health check - check both agent admin API and FastAPI
 HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost:8070/status || exit 1
+    CMD curl -f http://localhost:8002/health 2>/dev/null || exit 1
 
 # Entry point
 ENTRYPOINT ["/bin/bash", "-c"]
@@ -54,7 +54,7 @@ CMD ["aca-py start \
     --wallet-storage-type default \
     --genesis-url ${GENESIS_URL} \
     --endpoint http://holder-agent:${AGENT_PORT} \
-    --label '${AGENT_NAME}' \
+    --label \"${AGENT_NAME}\" \
     --public-invites \
     --auto-provision \
     --auto-ping-connection \
