@@ -296,5 +296,17 @@ class DatabaseService:
             raise
 
 
-# Create a singleton instance
-db_service = DatabaseService()
+# Lazy singleton instance - initialized on first use
+_db_service_instance = None
+
+
+def get_db_service():
+    """Get or create the database service singleton"""
+    global _db_service_instance
+    if _db_service_instance is None:
+        _db_service_instance = DatabaseService()
+    return _db_service_instance
+
+
+# For backward compatibility
+db_service = get_db_service()
